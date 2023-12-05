@@ -3,9 +3,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:navigation/core/theme/app_themes.dart';
-import 'package:navigation/core/utils/animated_bottom_navigation/curved_navigation_bar.dart';
+import 'package:navigation/core/utils/bottom_navigation/animated_bottom_bar.dart';
 import 'package:navigation/features/home/presentation/controller/home_controller.dart';
+
+import '../../../../core/utils/bottom_navigation/models/bottom_bar_item_model.dart';
 
 class HomeScreen extends GetView<HomeController> {
   HomeScreen({super.key});
@@ -40,34 +41,43 @@ class HomeScreen extends GetView<HomeController> {
       ),
       extendBody: true,
       bottomNavigationBar: Obx(
-        () => CurvedNavigationBar(
-          index: 0,
-          height: 60.0,
-          items: <Widget>[
-            uiBottomItem(0, Icons.home, 'home'),
-            uiBottomItem(1, Icons.search, 'search'),
-            uiBottomItem(2, Icons.add, 'add'),
-            uiBottomItem(3, Icons.history, 'history'),
-            uiBottomItem(4, Icons.perm_identity, 'profile'),
-          ],
+        () => AnimatedBottomBar(
+          notchBottomBarController: controller.notchBottomBarController,
+          showLabel: true,
+          showShadow: false,
+          showBlurBottomBar: false,
+          itemLabelStyle: context.theme.textTheme.bodySmall,
           color: controller.isLight.value ? Colors.white : Colors.black,
-          backgroundColor: Colors.transparent,
-          animationCurve: Curves.easeInOut,
-          animationDuration: const Duration(milliseconds: 800),
+          notchColor: controller.isLight.value ? Colors.white : Colors.black,
+          removeMargins: true,
+          bottomBarWidth: 500,
+          durationInMilliSeconds: 500,
+          bottomBarItems: [
+            uiBottomItem(0,Icons.home,'home'),
+            uiBottomItem(0,Icons.search,'search'),
+            uiBottomItem(0,Icons.add,'add'),
+            uiBottomItem(0,Icons.history,'history'),
+            uiBottomItem(0,Icons.person,'profile'),
+          ],
           onTap: (index) {
             controller.pageController.jumpToPage(index);
-            controller.changePageIndex(index);
           },
-          letIndexChange: (index) => true,
         ),
       ),
     );
   }
 
-  uiBottomItem(int index, IconData icon, String text) => Column(children: [
-        Icon(icon, size: 30),
-        if (index != controller.pageIndex.value) Text(text),
-      ]);
+  uiBottomItem(int index, IconData icon, String text) => BottomBarItem(
+        inActiveItem: Icon(
+          icon,
+          color: controller.isLight.value ? Colors.black : Colors.white,
+        ),
+        activeItem: Icon(
+          icon,
+          color: controller.isLight.value ? Colors.black : Colors.white,
+        ),
+        itemLabel: text,
+      );
 
   appLightDarkSwitch() => Obx(
         () => Switch(
